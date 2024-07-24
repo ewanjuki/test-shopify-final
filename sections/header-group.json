@@ -1,0 +1,93 @@
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "gamified_announcement_bar_HKiW3d": {
+      "type": "gamified-announcement-bar",
+      "blocks": {
+        "cart_value_reward_yTcYLg": {
+          "type": "cart_value_reward",
+          "settings": {
+            "reward_title": "Free Shipping",
+            "reward_description": "On all EU regions",
+            "reward_icon": "🛍️",
+            "reward_condition": 3000
+          }
+        },
+        "cart_value_reward_rfL9PM": {
+          "type": "cart_value_reward",
+          "settings": {
+            "reward_title": "10% Discount",
+            "reward_description": "On items in the EU",
+            "reward_icon": "💵",
+            "reward_condition": 10000
+          }
+        }
+      },
+      "block_order": [
+        "cart_value_reward_yTcYLg",
+        "cart_value_reward_rfL9PM"
+      ],
+      "settings": {
+        "bg_color": "",
+        "text_color": "{{ shop.brand.colors.primary[0].background }}",
+        "bar_color": "#4598b4",
+        "highlight_color": "#e7adad",
+        "is_border_visible": false,
+        "border_color": "#c4c4c4",
+        "section_padding": 1,
+        "bar_thickness": 4,
+        "is_position_indicator_visible": true,
+        "position_indicator_size": 15
+      }
+    },
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-3",
+        "show_line_separator": true,
+        "show_social": false,
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_position": "top-center",
+        "menu": "main-menu",
+        "menu_type_desktop": "dropdown",
+        "sticky_header_type": "on-scroll-up",
+        "show_line_separator": false,
+        "color_scheme": "scheme-1",
+        "menu_color_scheme": "scheme-1",
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "mobile_logo_position": "center",
+        "margin_bottom": 24,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    }
+  },
+  "order": [
+    "gamified_announcement_bar_HKiW3d",
+    "announcement-bar",
+    "header"
+  ]
+}

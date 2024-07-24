@@ -1,0 +1,310 @@
+<style>
+    .bs-devshop__instagram-carousel {
+        width: 100%;
+        overflow: scroll;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .bs-devshop__instagram-carousel-item-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        gap: var(--carousel-gap);
+        overflow: scroll;
+
+        padding: 1rem var(--padding-desktop);
+    }
+
+    .bs-devshop__instagram-carousel--hide-scrollbar .bs-devshop__instagram-carousel-item-container {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .bs-devshop__instagram-carousel--hide-scrollbar .bs-devshop__instagram-carousel-item-container::-webkit-scrollbar {
+        display: none;
+    }
+  
+
+    .bs-devshop__carousel-item {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .bs-devshop__carousel-item-copy {
+        margin-top: 1rem;
+        padding: 0 1rem;
+        max-width: var(--carousel-height);
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bs-devshop__carousel-item-body {
+        background-color: var(--background-color);
+        border-radius: 100%;
+        overflow: hidden;
+        min-width: var(--carousel-height);
+        max-width: var(--carousel-height);
+        height: var(--carousel-height);
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .bs-devshop__instagram-carousel:not(.bs-devshop__instagram-carousel--hide-border) .bs-devshop__carousel-item-body {
+        border: var(--border-width) solid var(--border-color);
+    }
+
+    @media only screen and (max-width: 600px) {
+        .bs-devshop__instagram-carousel-item-container { 
+            padding: 1rem var(--padding-mobile);
+        }
+    }
+</style>
+
+<div 
+    class="
+        bs-devshop__instagram-carousel wrapper
+        {% if section.settings.hide_border %} bs-devshop__instagram-carousel--hide-border {% endif %}
+        {% if section.settings.hide_scrollbar %} bs-devshop__instagram-carousel--hide-scrollbar {% endif %}
+    " 
+    style="
+        --carousel-gap: {{ section.settings.carousel_gap }}rem; 
+        --border-width: {{ section.settings.border_thickness }}px; 
+        --carousel-height: {{ section.settings.carousel_height }}rem; 
+        --border-color: {{ section.settings.border_color }};
+        --background-color: {{ section.settings.bg_color }};
+        --padding-desktop: {{ section.settings.padding_desktop }}rem;
+        --padding-mobile: {{ section.settings.padding_mobile }}rem;
+    ">
+    <div class="bs-devshop__instagram-carousel-item-container">
+        {% for block in section.blocks %}
+            {% if block.type == "product" %}
+                {% assign product = block.settings.product %}
+                <a class="bs-devshop__carousel-item" href="{{ product.url }}">
+                    <div class="bs-devshop__carousel-item-body">
+                        {% if product.images and product.images[0] %}
+                            {{ product.images[0] | image_url: width: 300 | image_tag }}
+                        {% endif %}
+                    </div>
+     
+                   
+                    <div class="bs-devshop__carousel-item-copy">
+                        {%- capture title -%}
+                            {% if block.settings.title != blank %}
+                                {{ block.settings.title }}
+                            {% else %}
+                                {{ product.title }}
+                            {% endif %}
+                        {%- endcapture -%}
+                        
+                        {{ title }}
+                    </div>
+                </a>
+
+               
+            {% endif %}
+
+            {% if block.type == "collection" %}
+                {% assign collection = block.settings.collection %}
+                <a class="bs-devshop__carousel-item" href="{{ collection.url }}">
+                    <div class="bs-devshop__carousel-item-body">
+                        {% if collection.featured_image != blank %}
+                            {{ collection.featured_image | image_url: width: 300 | image_tag }}
+                        {% endif %}
+                    </div>
+
+                    <div class="bs-devshop__carousel-item-copy">
+                        {%- capture title -%}
+                            {% if block.settings.title != blank %}
+                                {{ block.settings.title }}
+                            {% else %}
+                                {{ collection.title }}
+                            {% endif %}
+                        {%- endcapture -%}
+                        
+                        {{ title }}
+                    </div>
+                </a>
+            {% endif %}
+
+            {% if block.type == "page" %}
+                <a class="bs-devshop__carousel-item" href="{{ block.settings.page_url.url }}">
+                    <div class="bs-devshop__carousel-item-body">
+                        {% if block.settings.cover_image != blank %}
+                            {{ block.settings.cover_image | image_url: width: 300 | image_tag }}
+                        {% endif %}
+                    </div>
+
+                    <div class="bs-devshop__carousel-item-copy">
+                        {{ block.settings.title }}
+                    </div>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "Instagram Carousel",
+    "tag": "section",
+    "blocks": [
+    {
+        "name": "page",
+        "type": "page",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "cover_image",
+                "label": "Cover Image"
+            }, 
+            {
+                "type": "page",
+                "id": "page_url",
+                "label": "Page URL"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Title"
+            }
+        ]
+    },
+
+    {
+        "name": "product",
+        "type": "product",
+        "settings": [{
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+            
+        }, {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        }]
+    },
+
+    {
+        "name": "collection",
+        "type": "collection",
+        "settings": [{
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection"
+        }, {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        }]
+    }
+
+    ],
+    "settings": [
+        {
+            "type": "header",
+            "content": "Position"
+        },
+        {
+            "label": "Carousel Gap",
+            "type": "range",
+            "default": 1,
+            "id": "carousel_gap",
+            "step": 0.5,
+            "unit": "rem",
+            "min": 0.5,
+            "max": 10
+        },
+        {
+            "label": "Carousel Height",
+            "type": "range",
+            "default": 10,
+            "id": "carousel_height",
+            "step": 1,
+            "unit": "rem",
+            "min": 10,
+            "max": 50
+        },
+        {
+            "type": "range",
+            "id": "padding_desktop",
+            "label": "Desktop Padding",
+            "min": 0.5,
+            "max": 5,
+            "step": 0.5,
+            "unit": "rem",
+            "default": 1
+        },
+        {
+            "type": "range",
+            "id": "padding_mobile",
+            "label": "Mobile Padding",
+            "min": 0.5,
+            "max": 5,
+            "step": 0.5,
+            "unit": "rem",
+            "default": 1
+        },
+        {
+            "type": "header",
+            "content": "Display"
+        },
+        {
+            "type": "checkbox",
+            "id": "hide_scrollbar",
+            "default": false,
+            "label": "Hide Scrollbar"
+        },
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background Color"
+        },
+        {
+            "type": "color",
+            "id": "border_color",
+            "label": "Border Color"
+        },
+        {
+            "type": "checkbox",
+            "id": "hide_border",
+            "default": false,
+            "label": "Hide Border"
+        },
+        {
+            "type": "range",
+            "id": "border_thickness",
+            "label": "Border Thickness",
+            "min": 0.5,
+            "max": 5,
+            "step": 0.5,
+            "unit": "px",
+            "default": 1
+        }
+    ],
+    "presets": [
+        {
+          "name": "Instagram Carousel",
+          "blocks": [
+            {
+              "type": "product"
+            },
+            {
+              "type": "collection"
+            },
+            {
+              "type": "page"
+            }
+          ]
+        }
+      ]
+
+}
+{% endschema %}

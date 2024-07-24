@@ -1,0 +1,184 @@
+{
+  "sections": {
+    "section_instagram_carousel_QaVzeL": {
+      "type": "section-instagram-carousel",
+      "blocks": {
+        "product_3V69Ky": {
+          "type": "product",
+          "settings": {
+            "product": "3d-star-top-1",
+            "title": ""
+          }
+        },
+        "collection_qxYKDE": {
+          "type": "collection",
+          "settings": {
+            "collection": "annakiki",
+            "title": ""
+          }
+        },
+        "page_TLK6fa": {
+          "type": "page",
+          "settings": {
+            "cover_image": "shopify:\/\/shop_images\/products1_1.jpg",
+            "page_url": "contact",
+            "title": "Coffee"
+          }
+        },
+        "product_fW36A3": {
+          "type": "product",
+          "settings": {
+            "product": "3d-wave-deconstruction-jeans",
+            "title": ""
+          }
+        },
+        "product_Pqfnzj": {
+          "type": "product",
+          "settings": {
+            "product": "3d-wave-sleeve-slim-suit",
+            "title": ""
+          }
+        },
+        "product_mxg879": {
+          "type": "product",
+          "settings": {
+            "product": "3d-wave-sleeve-splitted-coat",
+            "title": ""
+          }
+        },
+        "product_heFpat": {
+          "type": "product",
+          "settings": {
+            "product": "d-wave-sleeve-short-cortex-coat",
+            "title": ""
+          }
+        },
+        "product_GFgYtz": {
+          "type": "product",
+          "settings": {
+            "product": "3d-wave-sleeve-slim-suit",
+            "title": ""
+          }
+        },
+        "product_PGkCMq": {
+          "type": "product",
+          "settings": {
+            "product": "3d-wavy-sleeve-motorcycle-leather-jacket",
+            "title": ""
+          }
+        },
+        "product_E6fi6J": {
+          "type": "product",
+          "settings": {
+            "product": "3d-star-top-1",
+            "title": ""
+          }
+        },
+        "page_ENtqDU": {
+          "type": "page",
+          "settings": {
+            "cover_image": "shopify:\/\/shop_images\/Screenshot2024-02-16at14.12.39.png",
+            "page_url": "contact",
+            "title": "Contact"
+          }
+        }
+      },
+      "block_order": [
+        "product_3V69Ky",
+        "collection_qxYKDE",
+        "page_TLK6fa",
+        "product_fW36A3",
+        "product_Pqfnzj",
+        "product_mxg879",
+        "product_heFpat",
+        "product_GFgYtz",
+        "product_PGkCMq",
+        "product_E6fi6J",
+        "page_ENtqDU"
+      ],
+      "settings": {
+        "carousel_gap": 1,
+        "carousel_height": 10,
+        "padding_desktop": 5,
+        "padding_mobile": 1.5,
+        "hide_scrollbar": true,
+        "bg_color": "",
+        "border_color": "#717171",
+        "hide_border": true,
+        "border_thickness": 2.5
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Browse our latest products",
+            "heading_size": "h1"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop now",
+            "button_link": "shopify:\/\/collections\/all",
+            "button_style_secondary": false
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify:\/\/shop_images\/Screenshot_2024-02-18_at_10.04.16.png",
+        "height": "large",
+        "desktop_image_width": "large",
+        "layout": "text_first",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "content_layout": "overlap",
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-3",
+        "image_behavior": "none",
+        "mobile_content_alignment": "left",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Featured products",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "all",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 56,
+        "padding_bottom": 68
+      }
+    }
+  },
+  "order": [
+    "section_instagram_carousel_QaVzeL",
+    "image-with-text",
+    "featured-collection"
+  ]
+}

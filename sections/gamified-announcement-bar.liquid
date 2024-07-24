@@ -1,0 +1,469 @@
+{%- liquid
+  assign cart_value = cart.total_price | divided_by: 100
+  assign max_reward_value = 0
+
+  assign rewards_ordered_by_value = section.blocks | sort: 'settings.reward_condition'
+  assign max_reward_value = rewards_ordered_by_value.last.settings.reward_condition
+
+  assign next_reward_title = rewards_ordered_by_value.last.settings.reward_title
+  assign next_reward_value = max_reward_value
+  assign next_reward_description = rewards_ordered_by_value.last.settings.reward_description
+
+  for reward in rewards_ordered_by_value
+    if cart_value < reward.settings.reward_condition
+      assign next_reward_title = reward.settings.reward_title
+      assign next_reward_value = reward.settings.reward_condition
+      assign next_reward_description = reward.settings.reward_description
+      break
+    endif
+  endfor
+
+  assign difference = next_reward_value | minus: cart_value
+
+  assign max_reward_value_float = max_reward_value | times: 1.0
+  assign eligable_percent_complete = 100 | divided_by: max_reward_value_float | times: cart_value
+
+  if difference <= 0
+    assign is_eligable_for_final_reward = true
+  else
+    assign is_eligable_for_final_reward = false
+  endif
+
+  assign bar_background_container_color = 'black'
+  if section.settings.dark_mode
+    assign bar_background_container_color = 'white'
+  endif
+%}
+
+<style>
+  #gamified-announcement-bar-{{ section.id }} {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: var(--section_padding) 1rem;
+      background-color: var(--bg_color);
+      color: var(--text_color);
+  }
+
+  .gamified-announcement-bar--border-bottom {
+    border-bottom: 1px solid;
+    border-color: var(--border_color);
+    background-color: red;
+  }
+
+  .gamified-announcement-bar {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+
+      span.highlight-text {
+        color: var(--highlight-color);
+        font-weight: bold;
+      }
+
+      .main-text {
+        margin: 0;
+      }
+
+      .descrption-text {
+        margin: 0;
+        opacity: 0.5;
+        font-size: 0.8rem;
+      }
+
+      .shipping-bar-section {
+        padding: 0.5rem 1.5rem;
+      }
+
+      .shipping-bar-container {
+          width: 100%;
+          position: relative;
+      }
+
+      .shipping-bar {
+          height: var(--bar-thickness);
+          background: var(--bar-color);
+          width: var(--bar-progress);
+          max-width: 100%;
+          position: absolute;
+          left: 0;
+          border-radius: 20px;
+          z-index: 2;
+          display: block;
+          transition: all 0.3s ease-out;
+      }
+
+      .shipping-bar-background {
+        height: var(--bar-thickness);
+        border-radius: 20px;
+        background-color: {{ bar_background_container_color }};
+        opacity: 0.5;
+        width: 100%;
+        display: block;
+      }
+
+      .shipping-bar-pos-indicator {
+        width: var(--bar-indicator-size);
+        height: var(--bar-indicator-size);
+
+        border-radius: 100%;
+        position: absolute;
+        display: block;
+        z-index: 5;
+
+        transition: all 0.3s ease-out;
+
+        background-color: var(--bar-color);
+        top: calc(var(--bar-indicator-size) * -0.5 + var(--bar-thickness) / 2);
+        left: calc(var(--bar-progress) - var(--bar-indicator-size) / 2);
+      }
+
+      .shipping-bar-pos-indicator.shipping-bar-pos-indicator--unlocked {
+
+      }
+
+      .progress-marker {
+        background: var(--bar-color);
+        z-index: 20;
+      }
+
+      .value-marker {
+        z-index: 10;
+        font-size: 2rem;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        background-color: #00000005;
+      }
+  }
+</style>
+
+<script>
+  /* 
+    Intercept all fetch requests - any request that has /cart/ in it - we reload the section 
+    - not best practice, as this is inefficient if you already know the functions that emit this event
+    - but this was created as a drag + drop solution. Seek pro help (or just ask me) if you want manual set up @ijbarratt
+    - Code inspired by ggorlen on: https://stackoverflow.com/questions/45425169/intercept-fetch-api-requests-and-responses-in-javascript
+  */
+  const {fetch: origFetch} = window;
+  window.fetch = async (...args) => {
+    const response = await origFetch(...args);
+
+    const requestUrl = args[0]
+    if (requestUrl.includes('/cart/')) {
+      updateGamifiedAnnouncementBar()
+    }
+
+    return response;
+  };
+
+  /* 
+    Wanted to use the section render API: https://shopify.dev/docs/api/ajax/section-rendering
+    But this doesn't let you use section.settings, which means all of our rewards set in theme selector would be missing
+  */
+  function updateGamifiedAnnouncementBar() {
+    fetch(window.location.origin) // request website root
+      .then((response) => response.text())
+      .then((responseText) => {
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const selector = '[id^=gamified-announcement-bar]';
+        const targetElement = document.querySelector(selector);
+        const sourceElement = html.querySelector(selector);
+
+        const textSelector = '.text-wrapper';
+        const shippingBarSelector = '.shipping-bar-container';
+
+        if (targetElement && sourceElement) {
+          const targetText = targetElement.querySelector(textSelector);
+          const sourceText = sourceElement.querySelector(textSelector);
+          targetText.replaceWith(sourceText);
+
+          const sourceShippingBar = sourceElement.querySelector(shippingBarSelector);
+          const targetShippingBar = targetElement.querySelector(shippingBarSelector);
+
+          const shippingBarStyle = sourceShippingBar.style;
+          const barProgress = shippingBarStyle.getPropertyValue('--bar-progress');
+
+          targetShippingBar.style.setProperty('--bar-progress', barProgress);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
+</script>
+
+<section
+  id="gamified-announcement-bar-{{ section.id }}"
+  style="
+    --bar-indicator-size: {{ section.settings.position_indicator_size }}px;
+    --bar-thickness: {{ section.settings.bar_thickness }}px;
+    --bar-color: {{ section.settings.bar_color }};
+    --highlight-color: {{ section.settings.highlight_color }};
+    --bg_color: {{ section.settings.bg_color }};
+    --text_color: {{ section.settings.text_color }};
+    --border_color: {{ section.settings.border_color }};
+    --section_padding: {{ section.settings.section_padding }}rem;
+  "
+  class="
+    {% if section.settings.is_border_visible %}
+      gamified-announcement-bar--border-bottom
+    {% endif %}
+    {% if section.settings.is_sticky_header %}
+      gamified-announcement-bar--sticky-top
+    {% endif %}
+  "
+>
+  <div class="gamified-announcement-bar wrapper">
+    <div class="text-wrapper">
+      {% if is_eligable_for_final_reward %}
+        <p class="main-text">You've unlocked {{ next_reward_title }}!</p>
+        <p class="descrption-text">{{ next_reward_description }}</p>
+      {% else %}
+        <p class="main-text">
+          You're
+          <span class="highlight-text">
+            {{- cart.currency.symbol -}}
+            {{- difference -}}
+          </span>
+          away from {{ next_reward_title }}
+        </p>
+        <p class="descrption-text">{{ next_reward_description }}</p>
+      {% endif %}
+    </div>
+    <div class="shipping-bar-section">
+      <div class="shipping-bar-container" style="--bar-progress: {{ eligable_percent_complete | append: '%' }};">
+        {% if is_eligable_for_final_reward == false and section.settings.is_position_indicator_visible == true %}
+          <div class="shipping-bar-pos-indicator progress-marker"></div>
+        {% endif %}
+
+        {% for reward in section.blocks %}
+          {% liquid
+            assign progress_percent = 100 | divided_by: max_reward_value_float | times: reward.settings.reward_condition
+            assign is_unlocked = false
+            if eligable_percent_complete >= progress_percent
+              assign is_unlocked = true
+            endif
+          %}
+          <div
+            class="shipping-bar-pos-indicator value-marker {% if is_unlocked %}shipping-bar-pos-indicator--unlocked{% endif %}"
+            style="--bar-progress: {{ progress_percent }}%;"
+          >
+            {{ reward.settings.reward_icon }}
+          </div>
+        {% endfor %}
+
+        <div class="shipping-bar"></div>
+        <div class="shipping-bar-background"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gamified Announcement Bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "color",
+      "id": "bar_color",
+      "label": "Bar Color",
+      "default": "#0096C7"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight Text Color",
+      "default": "#E7ADAD"
+    },
+    {
+      "type": "header",
+      "content": "Section Style"
+    },
+    {
+      "type": "checkbox",
+      "default": false,
+      "id": "is_border_visible",
+      "label": "Show Border"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Section Vertical Padding",
+      "min": 0.5,
+      "step": 0.5,
+      "max": 4,
+      "default": 1,
+      "unit": "rem"
+    },
+    {
+      "type": "header",
+      "content": "Bar Style"
+    },
+    {
+      "type": "range",
+      "id": "bar_thickness",
+      "label": "Bar Thickness",
+      "min": 1,
+      "max": 10,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "default": true,
+      "id": "is_position_indicator_visible",
+      "label": "Show Position Indicator"
+    },
+    {
+      "type": "range",
+      "id": "position_indicator_size",
+      "label": "Position Indicator Size",
+      "min": 5,
+      "max": 40,
+      "default": 15,
+      "unit": "px"
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "cart_value_reward",
+      "name": "Cart Value Reward",
+      "settings": [
+        {
+          "type": "text",
+          "id": "reward_title",
+          "label": "Reward Title"
+        },
+        {
+          "type": "text",
+          "id": "reward_description",
+          "label": "Reward Description"
+        },
+        {
+          "type": "select",
+          "id": "reward_icon",
+          "label": "Reward Icon",
+          "options": [
+            {
+              "label": "🙏",
+              "value": "🙏"
+            },
+            {
+              "label": "✊",
+              "value": "✊"
+            },
+            {
+              "label": "👮",
+              "value": "👮"
+            },
+            {
+              "label": "👩🏼‍🚀",
+              "value": "👩🏼‍🚀"
+            },
+            {
+              "label": "👨🏻‍🔧",
+              "value": "👨🏻‍🔧"
+            },
+            {
+              "label": "🌱",
+              "value": "🌱"
+            },
+            {
+              "label": "🌏",
+              "value": "🌏"
+            },
+            {
+              "label": "🏖️",
+              "value": "🏖️"
+            },
+            {
+              "label": "🚀",
+              "value": "🚀"
+            },
+            {
+              "label": "🎁",
+              "value": "🎁"
+            },
+            {
+              "label": "🔋",
+              "value": "🔋"
+            },
+            {
+              "label": "🗿",
+              "value": "🗿"
+            },
+            {
+              "label": "📍",
+              "value": "📍"
+            },
+            {
+              "label": "🗓",
+              "value": "🗓"
+            },
+            {
+              "label": "💵",
+              "value": "💵"
+            },
+            {
+              "label": "🛍️",
+              "value": "🛍️"
+            }
+          ]
+        },
+        {
+          "type": "number",
+          "id": "reward_condition",
+          "label": "Needed Cart Value"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gamified Announcement Bar",
+      "blocks": [
+        {
+          "type": "cart_value_reward",
+          "settings": {
+            "reward_title": "Free Shipping",
+            "reward_condition": 500,
+            "reward_icon": "🛍️"
+          }
+        },
+        {
+          "type": "cart_value_reward",
+          "settings": {
+            "reward_title": "10% Discount",
+            "reward_condition": 1000,
+            "reward_icon": "💵"
+          }
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

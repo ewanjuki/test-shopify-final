@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "link-builder": {
+      "type": "link-builder",
+      "settings": {
+      },
+      "blocks": [
+        {
+            "type": "link",
+            "settings": {
+              "title": "🎉ProductXYZ",
+              "tag": "NEW"
+            }
+          },
+          {
+            "type": "link",
+            "settings": {
+              "title": "📦Build Your Bundle & Save"
+            }
+          },
+          {
+            "type": "link",
+            "settings": {
+              "title": "🐶Joint Pain Chews",
+              "tag": "Best seller",
+              "is_highlight": true
+            }
+          },
+          {
+            "type": "link",
+            "settings": {
+              "title": "🇸🇬National Day Sale"
+            }
+          }
+      ]
+    }
+  },
+  "order": [
+    "link-builder"
+  ]
+}

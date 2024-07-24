@@ -1,0 +1,294 @@
+<script>
+  function openTFPopup() {
+    const countryPopup = document.getElementById('typeform-popup');
+    countryPopup.setAttribute('data-is-open', true);
+  }
+
+
+  function prepPopups() {
+    // Clicking on .popup class closes popups, check custom-theme.js
+    // Get all popups to close if clicked outside of inner elements (on parent specifically)
+    const popups = document.querySelectorAll('*[data-is-open].popup');
+    console.log(popups);
+    popups.forEach((n) => {
+      n.addEventListener('click', (e) => {
+        // Only work if clicking the the parent div - not it's children
+        if (e.target == n) {
+          closeParentPopup(e);
+        }
+      });
+    });
+  }
+
+  function closeParentPopup(e) {
+    let button = e.target;
+    const popup = button.closest('.popup[data-is-open="true"]');
+
+    if (popup) {
+      popup.setAttribute('data-is-open', false);
+    }
+  }
+
+  function prepPopups() {
+    // Get all popups to close if clicked outside of inner elements (on parent specifically)
+    const popups = document.querySelectorAll('*[data-is-open].popup');
+    console.log(popups);
+    popups.forEach((n) => {
+      n.addEventListener('click', (e) => {
+        // Only work if clicking the the parent div - not it's children
+        if (e.target == n) {
+          closeParentPopup(e);
+        }
+      });
+    });
+  }
+
+  addEventListener('DOMContentLoaded', (event) => {
+    // Set eventListeners for all the popups (even though we only have one so far)
+    prepPopups();
+  });
+</script>
+
+<style>
+  .stick-footer-cta {
+    position: fixed;
+    bottom: var(--outer);
+    right: var(--outer);
+    padding: calc(var(--cta-padding) / 2) var(--cta-padding);
+    background-color: var(--bg);
+    border-radius: var(--border-radius);
+    z-index: 50;
+  }
+
+  .stick-footer-cta.stick-footer-cta--bottom-border {
+    border: 2px solid var(--border-col);
+  }
+
+  .stick-footer-cta .title {
+    font-size: var(--font-size);
+    color: var(--font-color);
+    margin: 0;
+    padding: 0;
+  }
+
+  .stick-footer-cta:hover {
+    cursor: pointer;
+  }
+
+  #custom-popups .popup {
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    opacity: 0;
+    pointer-events: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: all 0.3 ease-out;
+  }
+
+  .popup .buttons {
+    margin-top: 1.5rem;
+  }
+
+  .popup .title {
+    margin-top: 0;
+    padding-top: 0;
+    font-weight: 500;
+  }
+
+  .popup button {
+    color: #005cff;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0;
+  }
+
+  #custom-popups .popup[data-is-open='true'] .popup-container {
+    transform: translateY(0);
+    transition: all 0.2 ease-out;
+
+    background-color: var(--bg); 
+    border-radius: var(--border-radius);
+    padding: 4rem 4.125rem;
+    max-width: 36.75rem;
+  }
+
+  #custom-popups .popup[data-is-open='true'] {
+    opacity: 1;
+    pointer-events: unset;
+    z-index: 9999;
+    transition: all 0.3 ease-out;
+  }
+
+  #typeform-popup iframe {
+    width: 800px;
+    max-width: 100%;
+  }
+
+</style>
+
+<div 
+  id="custom-popups" 
+  class=""
+>
+  {% for block in section.blocks %}
+    {{ block.settings.type }}
+    {% if block.type == 'typeform_popup' %}
+      <div 
+        id="typeform-popup-bottom-border" 
+        class="stick-footer-cta {% if block.settings.is_border_visible %}stick-footer-cta--bottom-border{% endif %}" 
+        onclick="openTFPopup()"
+        style="
+          --bg: {{ block.settings.bg_color }};
+          --outer: {{ block.settings.margin }}rem;
+          --border-col: {{ block.settings.border_color }};
+          --font-size: {{ block.settings.font_size }}rem;
+          --cta-padding: {{ block.settings.cta_padding }}rem;
+          --font-color: {{ block.settings.font_color }};
+          --border-radius: {{ block.settings.border_radius }}rem;
+        "
+      >
+        <h6 class="title">
+          {{ block.settings.sticky_title }}
+        </h6>
+      </div>
+
+      <div 
+        id="typeform-popup" 
+        class="popup" 
+        data-is-open="false"
+        style="
+          --bg: {{ block.settings.bg_color }};
+          --font-color: {{ block.settings.font_color }};
+          --border-radius: {{ block.settings.border_radius }}rem;
+        "
+      >
+        <div class="wrapper">
+          {% if block.settings.typeform_id == blank %}
+            <div class="popup-container">
+              <h3 class="title">No Typeform ID added</h3>
+              <p>It wont work without an id dummy</p>
+            </div>
+          {% else %}
+            <div data-tf-live="{{ block.settings.typeform_id }}"></div>
+            <script src="//embed.typeform.com/next/embed.js" defer></script>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Custom Popups",
+  "settings": [],
+  "max_blocks": 1,
+  "blocks": [
+    {
+      "type": "typeform_popup",
+      "name": "Typeform Popup",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Popup Button"
+        },
+        {
+          "type": "text",
+          "id": "sticky_title",
+          "label": "Sticky Title",
+          "default": "Click me!"
+        },
+        {
+          "type": "range",
+          "id": "border_radius",
+          "step": 0.5,
+          "label": "Rounded Corners",
+          "default": 0.5,
+          "unit": "rem",
+          "min": 0,
+          "max": 4
+        },
+        {
+          "type": "range",
+          "id": "margin",
+          "label": "CTA margin",
+          "min": 1,
+          "max": 5,
+          "unit": "rem",
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "font_size",
+          "label": "Font Size",
+          "min": 1,
+          "max": 5,
+          "unit": "rem",
+          "default": 2
+        },
+        {
+          "type": "range",
+          "id": "cta_padding",
+          "label": "CTA Padding",
+          "max": 5,
+          "min": 1,
+          "default": 2,
+          "unit": "rem"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "font_color",
+          "label": "Font Color",
+          "default": "#000000"
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "is_border_visible",
+          "label": "Show Border"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border Color",
+          "default": "#2F2F2F"
+        },
+        {
+          "type": "header",
+          "content": "Form Settings"
+        },
+        {
+          "type": "text",
+          "id": "typeform_id",
+          "label": "Typeform ID"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Popups",
+      "blocks": []
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

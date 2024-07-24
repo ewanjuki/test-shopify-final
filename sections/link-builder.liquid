@@ -1,0 +1,190 @@
+<style>
+  .bs-devshop__link-builder-body {
+    width: 100%;
+    padding-top: 1.6rem;
+    padding-bottom: 1rem;
+  }
+
+  .bs-devshop__link-builder-link-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 382px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  {% comment %} @media only screen and (max-width: 424px) {
+    .bs-devshop__link-builder-body {
+
+    }
+  } {% endcomment %}
+}
+
+  .bs-devshop__link-builder-link-container a {
+    text-decoration: none;
+}
+
+  .bs-devshop__link-builder-link-item {
+    padding: 2.4rem 2.2rem;
+    width: 100%;
+    border-radius: 0.4rem;
+    background-color: white;
+}
+
+.bs-devshop__link-builder-link-item {
+    text-decoration: none !important;
+}
+
+.bs-devshop__link-builder-link-item.link-item--highlight {
+    background: linear-gradient(81.07deg, #008080 0%, #389191 25%, #38739E 50%, #7D4FDF 75%, #D34FDF 100%);
+    color: white;
+}
+
+
+.bs-devshop__link-builder-link-item.link-item--highlight .tag {
+    background-color: white;
+    color: #008080;
+}
+
+.bs-devshop__link-builder-link-item .title {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.bs-devshop__link-builder-link-item .tag {
+    font-size: 0.9rem;
+    margin-left: 1.6rem;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.3rem;
+    color: white;
+    background-color: #008080;
+}
+
+</style>
+
+<div
+  class="
+    bs-devshop__link-builder wrapper
+    {% if section.settings.hide_border %} bs-devshop__instagram-carousel--hide-border {% endif %}
+    {% if section.settings.hide_scrollbar %} bs-devshop__instagram-carousel--hide-scrollbar {% endif %}
+  "
+  style="
+    --carousel-gap: {{ section.settings.carousel_gap }}rem;
+    --border-width: {{ section.settings.border_thickness }}px;
+    --carousel-height: {{ section.settings.carousel_height }}rem;
+    --border-color: {{ section.settings.border_color }};
+    --background-color: {{ section.settings.bg_color }};
+    --padding-desktop: {{ section.settings.padding_desktop }}rem;
+    --padding-mobile: {{ section.settings.padding_mobile }}rem;
+  "
+>
+  <div class="bs-devshop__link-builder-body page-width">
+    <div class="bs-devshop__link-builder-link-container">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.url }}">
+          <div class="bs-devshop__link-builder-link-item {% if block.settings.is_highlight %}link-item--highlight{% endif %}">
+            <span class="title">{{ block.settings.title }}</span>
+            {% if block.settings.tag != blank %}
+              <span class="tag">{{ block.settings.tag }}</span>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Link Builder",
+  "tag": "section",
+  "blocks": [
+    {
+      "name": "link",
+      "type": "link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "page_url",
+          "label": "Page URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_highlight",
+          "label": "Is highlighted",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "label": "Logo",
+      "type": "image_picker",
+      "id": "logo_image"
+    },
+    {
+      "label": "Title",
+      "id": "title",
+      "type": "text",
+      "default": "Only the Best for Your Pets"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>Pet supplements that are <b>actually</b> healthy </p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Link Builder",
+      "blocks": [
+        {
+          "type": "link",
+          "settings": {
+            "title": "🎉ProductXYZ",
+            "tag": "NEW"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "title": "📦Build Your Bundle & Save"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "title": "🐶Joint Pain Chews",
+            "tag": "Best seller",
+            "is_highlight": true
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "title": "🇸🇬National Day Sale"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
