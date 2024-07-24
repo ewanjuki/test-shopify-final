@@ -92,8 +92,8 @@
       {% endfor %}
     </div>
     <div class="bs-devshop__rewards__timer">
-      <span class="bs-devshop__rewards_timertext">{{ section.settings.timer_text }}</span>
-      <span class="bs-devshop__rewards_timermin">{{ section.settings.timer }}</span>
+      <span class="bs-devshop__rewards__timertext">{{ section.settings.timer_text }}</span>
+      <span class="bs-devshop__rewards__timermin">{{ section.settings.timer }}</span>
     </div>
   </div>
 </section>
@@ -123,7 +123,7 @@
       }
     }
   
-    let totalSeconds =  +document.querySelector('.bs-devshop__rewards_timermin').innerHTML * 60; 
+    let totalSeconds =  +document.querySelector('.bs-devshop__rewards__timermin').innerHTML * 60; 
     
     function run() {
       totalSeconds -= 1;
@@ -132,7 +132,7 @@
         return;
       }
       totalSecondsOutput = totalSeconds / 100;
-      document.querySelector('.bs-devshop__rewards_timermin').innerHTML = totalSecondsOutput;
+      document.querySelector('.bs-devshop__rewards__timermin').innerHTML = totalSecondsOutput;
     }
   
     setInterval(run, 1000);
